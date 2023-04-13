@@ -1,4 +1,8 @@
-import Image from 'next/image';
+import React, { useState, useEffect } from 'react';
+import { ScreenshotEvent } from '@rdlabo/capacitor-screenshot-event';
+import { PrivacyScreen } from '@capacitor-community/privacy-screen';
+
+
 import Card from '../ui/Card';
 
 import {
@@ -13,7 +17,6 @@ import {
   IonMenuButton,
 } from '@ionic/react';
 import Notifications from './Notifications';
-import { useState } from 'react';
 import { notificationsOutline } from 'ionicons/icons';
 import { getHomeItems } from '../../store/selectors';
 import Store from '../../store';
@@ -40,6 +43,20 @@ const FeedCard = ({ title, type, text, author, authorAvatar, image }) => (
 const Feed = () => {
   const homeItems = Store.useState(getHomeItems);
   const [showNotifications, setShowNotifications] = useState(false);
+
+
+  // Detecting screenshot
+  useEffect(() => {
+    ScreenshotEvent.addListener('userDidTakeScreenshot', () => {
+      alert('Screenshot detected');
+    });
+    ScreenshotEvent.startWatchEvent();
+  }, []);
+
+  // Detecting screen recording
+  PrivacyScreen.addListener('screenRecordingStarted', async () => {
+    alert('Screen Recording detected');
+  });
 
   return (
     <IonPage>
